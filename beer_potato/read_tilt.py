@@ -28,10 +28,10 @@ def my_process(data):
         for leader, decoder in decoders:
             xx = decoder.decode(ev)
             if xx and datetime.datetime.now() >= tick:
-                tick = datetime.datetime.now() + datetime.timedelta(seconds=15)
+                tick = datetime.datetime.now() + datetime.timedelta(minutes=5)
                 heaths_super_secert_url = secrets["server"]["url"]
                 # TODO: need to add the time?= to the url
-                # Saving data to database (or is it???)
+                # Sending data to the database
                 r = requests.post(heaths_super_secert_url, json=json.loads(xx))
                 print(r)
                 # Local logging for safety
@@ -52,13 +52,9 @@ async def amain(args=None):
     event_loop = asyncio.get_running_loop()
 
     # First create and configure a raw socket
-    # mysocket = aiobs.create_bt_socket(opts.device)
     mysocket = aiobs.create_bt_socket(0)
 
     # create a connection with the raw socket
-    # This used to work but now requires a STREAM socket.
-    # fac=event_loop.create_connection(aiobs.BLEScanRequester,sock=mysocket)
-    # Thanks to martensjacobs for this fix
     conn, btctrl = await event_loop._create_connection_transport(
         mysocket, aiobs.BLEScanRequester, None, None
     )
