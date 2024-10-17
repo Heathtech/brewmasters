@@ -1,1 +1,23 @@
-POST
+# Upload tilt data
+curl --location 'localhost:8080/brew/tilt' \
+--header 'Content-Type: application/json' \
+--data '{
+    "uuid": "a495bb00c5b14b44b5121370f02d74de",
+    "major": 69,
+    "minor": 1056,
+    "tx_power": 31,
+    "rssi": -49,
+    "mac": "xx:xx:xx:xx:xx:xx"
+}'
+
+# Upload old tilt data
+curl --location 'localhost:8080/brew/tilt?time=2024-10-15%2016%3A53%3A52.072518' \
+--header 'Content-Type: application/json' \
+--data '{
+    "uuid": "a495bb00c5b14b44b5121370f02d74de",
+    "major": 69,
+    "minor": 1056,
+    "tx_power": 31,
+    "rssi": -49,
+    "mac": "xx:xx:xx:xx:xx:xx"
+}'
