@@ -9,3 +9,4 @@ build/
 
 ### Custom ###
 persistent.db
+../deploy.bat
