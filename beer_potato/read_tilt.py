@@ -13,15 +13,6 @@ decoders = []
 tick = datetime.datetime.now()
 
 
-def check_mac(val):
-    try:
-        if re.match("[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", val.lower()):
-            return val.lower()
-    except:
-        pass
-    raise argparse.ArgumentTypeError("%s is not a MAC address" % val)
-
-
 def my_process(data):
     global opts
     global tick
