@@ -27,17 +27,17 @@ def my_process(data):
     if decoders:
         for leader, decoder in decoders:
             xx = decoder.decode(ev)
-            if xx and datetime.datetime.now() >= tick:
-                tick = datetime.datetime.now() + datetime.timedelta(minutes=5)
+            scan_time = datetime.datetime.now()
+            if xx and scan_time >= tick:
+                tick = scan_time + datetime.timedelta(minutes=5)
                 heaths_super_secert_url = secrets["server"]["url"]
-                # TODO: need to add the time?= to the url
+                heaths_super_secert_url = f"{heaths_super_secert_url}?time={scan_time}"
                 # Sending data to the database
                 r = requests.post(heaths_super_secert_url, json=json.loads(xx))
-                print(r)
+                print(r, json.dumps(xx))
                 # Local logging for safety
                 with open("massive_debt.json", "+a") as f:
-                    now = datetime.datetime.now()
-                    f.write(f"{now},")
+                    f.write(f"{scan_time},")
                     f.write(json.dumps(xx))
                     f.write("\n")
 
