@@ -4,10 +4,6 @@ import argparse
 import re
 import json
 import aioblescan as aiobs
-from aioblescan.plugins import EddyStone
-# from aioblescan.plugins import RuuviWeather
-# from aioblescan.plugins import ATCMiThermometer
-# from aioblescan.plugins import ThermoBeacon
 from aioblescan.plugins import Tilt
 import datetime
 
@@ -32,18 +28,7 @@ def my_process(data):
 
     ev = aiobs.HCI_Event()
     xx = ev.decode(data)
-    if True: #opts.mac:
-        goon = False
-        mac = ev.retrieve("peer")
-        # for x in mac:
-        #     if x.val in opts.mac:
-        #         goon = True
-        #         break
-        # if not goon:
-        #     return
 
-    # if opts.raw:
-    #     print("Raw data: {}".format(ev.raw_data))
     if decoders:
         for leader, decoder in decoders:
             xx = decoder.decode(ev)
@@ -56,13 +41,8 @@ def my_process(data):
                     f.write(f"{now},")
                     f.write(json.dumps(xx))
                     f.write("\n")
-                # print(f"{json.dumps(xx)}")
+
                 break
-                # if opts.leader:
-                #     print(f"{leader} {json.dumps(xx)}")
-                # else:
-                #     print(f"{json.dumps(xx)}")
-                # break
     else:
         ev.show(0)
 
@@ -85,29 +65,6 @@ async def amain(args=None):
     )
     # Attach your processing
     btctrl.process = my_process
-    # if opts.advertise:
-    # if True:
-        # command = aiobs.HCI_Cmd_LE_Advertise(enable=False)
-        # await btctrl.send_command(command)
-        # command = aiobs.HCI_Cmd_LE_Set_Advertised_Params(
-        #     interval_min=opts.advertise, interval_max=opts.advertise
-        # )
-        # command = aiobs.HCI_Cmd_LE_Set_Advertised_Params(
-        #     interval_min=1, interval_max=500
-        # )
-        # await btctrl.send_command(command)
-        # if opts.url:
-        #     myeddy = EddyStone(param=opts.url)
-        # else:
-        #     myeddy = EddyStone()
-        # if opts.txpower:
-        #     myeddy.power = opts.txpower
-        # command = aiobs.HCI_Cmd_LE_Set_Advertised_Msg(msg=myeddy)
-        # await btctrl.send_command(command)
-        # command = aiobs.HCI_Cmd_LE_Advertise(enable=True)
-        # await btctrl.send_command(command)
-    # Probe
-    # await btctrl.send_scan_request()
     try:
         while True:
             await asyncio.sleep(3600)
@@ -115,7 +72,6 @@ async def amain(args=None):
         print("keyboard interrupt")
     finally:
         print("closing event loop")
-        # event_loop.run_until_complete(btctrl.stop_scan_request())
         await btctrl.stop_scan_request()
         command = aiobs.HCI_Cmd_LE_Advertise(enable=False)
         await btctrl.send_command(command)
@@ -125,15 +81,9 @@ async def amain(args=None):
 def main():
     # Configured to only use the tilt
     decoders.append(("Tilt", Tilt()))
-    
-    
+
     with asyncio.Runner() as runner:
         runner.run(amain())
-    
-    # try:
-    #     asyncio.run(amain())
-    # except:
-    #     pass
 
 
 if __name__ == "__main__":
