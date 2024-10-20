@@ -36,7 +36,7 @@ def my_process(data):
                 r = requests.post(heaths_super_secert_url, json=json.loads(xx))
                 print(r, json.dumps(xx))
                 # Local logging for safety
-                with open("massive_debt.json", "+a") as f:
+                with open("/home/beer-potato/Documents/beer-potato/brewmasters/massive_debt.json", "+a") as f:
                     f.write(f"{scan_time},")
                     f.write(json.dumps(xx))
                     f.write("\n")
@@ -76,7 +76,7 @@ async def amain(args=None):
 def main():
     # read the secrets file to get access to the top secret server that stores our top secret data
     global secrets
-    with open("secrets.toml", "rb") as f:
+    with open("/home/beer-potato/Documents/beer-potato/brewmasters/secrets.toml", "rb") as f:
         secrets = tomllib.load(f)
 
     # Configured to only use the tilt
