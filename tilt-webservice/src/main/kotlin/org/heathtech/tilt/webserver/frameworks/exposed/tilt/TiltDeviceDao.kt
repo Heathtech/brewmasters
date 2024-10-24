@@ -11,6 +11,7 @@ object TiltDeviceTable : UUIDTable("tilt_device") {
     val name = text("tilt_name").nullable()
     val uuid = uuid("tilt_uuid")
     val debug = bool("debug").default(false)
+    val enabled = bool("enabled").default(false)
 }
 
 class TiltDeviceDao(
@@ -21,11 +22,13 @@ class TiltDeviceDao(
     var name by TiltDeviceTable.name
     var uuid by TiltDeviceTable.uuid
     var debug by TiltDeviceTable.debug
+    var enabled by TiltDeviceTable.enabled
 
     fun toModel() =
         TiltDevice(
             uuid = id.value,
             name = name ?: "untitled beer",
             debug = debug,
+            enabled = enabled,
         )
 }
