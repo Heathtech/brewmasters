@@ -12,7 +12,11 @@
             }
 
             .cellHeader{
-                padding-right: 100px;
+                padding-right: 75px;
+            }
+
+            .dateCellHeader {
+                padding-right: 180px;
             }
 
             .logo{
@@ -31,10 +35,122 @@
                 margin-top: 100px;
             }
 
+            .input{
+                width: 125px;
+                height: 25px;
+            }
+
+            .input2{
+                height: 28px;
+                width: 125px;
+            }
+
+            .input3{
+                height: 32px;
+                width: 75px;
+                margin-left: 5px;
+                border-radius: 4px;
+            }
+
+            .select-editable {
+                position:relative;
+                background-color:white;
+                border:solid grey 1px;
+                width:120px;
+                height:25px;
+            }
+
+            .select-editable select {
+                position:absolute;
+                top:0px;
+                left:0px;
+                font-size:14px;
+                border:none;
+                width:120px;
+                height:25px;
+                margin:0;
+            }
+            .select-editable input {
+                position:absolute;
+                top:0px;
+                left:0px;
+                width:100px;
+                padding:1px;
+                height:23px;
+                font-size:12px;
+                border:none;
+            }
+            .select-editable select:focus, .select-editable input:focus {
+                outline:none;
+            }
+
+            .textInput {
+                width:50px;
+            }
+
         </style>
         
+        <script language="javascript">
+            function GetData()
+            {
+                ClearTable();
+
+                var xhttp = new XMLHttpRequest();
+                var data;
+
+                var count = document.getElementById("rowsCount").value;
+
+                var url = `/brew/tilt/latest?limit=${count}`
+                //var url = `http://192.168.1.98:8080/brew/tilt/latest?limit=${count}`
+
+                xhttp.open("GET", url, true)
+
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        data = JSON.parse(this.responseText);
+
+                        for (const key in data) {
+                            var date = data[key]["loggedTime"];
+                            var gravity = data[key]["gravity"];
+                            var temp = data[key]["tiltTemp"];
+
+                            AddRow(date, gravity, temp);
+
+                        }
+                    }
+                }
+
+                xhttp.send();
+            }
+
+            function AddRow(date, gravity, temp)
+            {
+                var table = document.getElementById("dataTable");
+                
+                var newRow = table.insertRow(-1);
+
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
+
+                cell1.innerHTML = date;
+                cell2.innerHTML = gravity;
+                cell3.innerHTML = temp;
+            }
+
+            function ClearTable()
+            {
+                var table = document.getElementById("dataTable");
+
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
+            }
+
+        </script>
+        
     </head>
-    <body>
+    <body onload="GetData()">
         <div class="logo">
             <img src="logo.png"/>
         </div>
@@ -53,27 +169,52 @@
                     <th align="left">
                         Tilt
                     </th>
+                    <th>
+
+                    </th>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" value="Massive Debt" />
+                        <div class="select-editable">
+                            <select onchange="this.nextElementSibling.value=this.value">
+                                <option value=""></option>
+                                <option value="Massive Debt" selected="true">Massive Debt</option>
+                            </select>
+                            <input type="text" name="format" value="Massive Debt" />
+                        </div>
                     </td>
                     <td>
-                        <input type=""text" value="2024-10-12" />
+                        <input class="input" type="date" value="2024-10-12" />
                     </td>
                     <td>
-                        <input type=""text" value="Black" />
+                        <select class="input2">
+                            <option>
+                                Black
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="input3">
+                            Save
+                        </button>
                     </td>
                 </tr>
             </table>
             <p class="text">
-                Readings: 
-                <input type="text" value="2024-10-12" />
-                <input type="text" value="2024-10-12" />
+                Rows: 
+                <input class="textInput" id="rowsCount" type="text" value="10" />
+                <input type="button" value="Get Beer Data Go Go Go!!" onClick="GetData()"/>
+                
             </p>
-            <table border="1" class="text">
+
+            <!-- <p class="text">
+                Readings: 
+                <input class="input" type="date" value="2024-10-12" />
+                <input class="input" type="date" value="2024-10-12" />
+            </p> -->
+            <table id="dataTable" border="1" class="text">
                 <tr>
-                    <th class="cellHeader">
+                    <th class="dateCellHeader">
                         Date
                     </th>
                     <th class="cellHeader">
@@ -83,19 +224,7 @@
                         Temp
                     </th>
                 </tr>
-                <tr>
-                    <td>
-                        2024-10-12
-                    </td>
-                    <td>
-                        1.081
-                    </td>
-                    <td>
-                        71
-                    </td>
-                </tr>
             </table>
         </div>
-        
     </body>
 </html>
