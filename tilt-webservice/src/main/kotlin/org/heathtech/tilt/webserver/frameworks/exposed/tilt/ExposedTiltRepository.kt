@@ -17,7 +17,7 @@ class ExposedTiltRepository : TiltRepository {
     override fun storeDataPoint(data: TiltDataPoint): Unit =
         transaction {
             TiltDao.new {
-                device = TiltDeviceDao.find { TiltDeviceTable.uuid eq data.deviceUuid.toUuid() }.first()
+                device = TiltDeviceDao.find { TiltDeviceTable.id eq data.deviceUuid.toUuid() }.first()
                 tiltTemp = data.tiltTemp
                 gravity = data.gravity
                 battery = data.battery
@@ -33,9 +33,9 @@ class ExposedTiltRepository : TiltRepository {
         limit: Int?,
     ): List<TiltDataPoint> =
         transaction {
-            val deviceTableId = tiltDeviceId?.let { TiltDeviceDao.find { TiltDeviceTable.uuid eq tiltDeviceId }.first() }
+            val deviceTableId = tiltDeviceId?.let { TiltDeviceDao.find { TiltDeviceTable.id eq tiltDeviceId }.first() }
             val query = TiltDaoTable.selectAll()
-            if (deviceTableId != null) query.andWhere { tiltId eq deviceTableId.uuid }
+            if (deviceTableId != null) query.andWhere { tiltId eq deviceTableId.id.value }
             if (startDate != null) query.andWhere { TiltDaoTable.loggedAt greaterEq startDate }
             if (endDate != null) query.andWhere { TiltDaoTable.loggedAt lessEq endDate }
             if (limit != null) query.limit(limit)

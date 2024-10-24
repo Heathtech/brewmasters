@@ -9,9 +9,13 @@ import java.util.*
 
 @Repository
 class ExposedBeerRepository : BeerRepository {
-    override fun getBeers(): List<Beer> = BeerDao.all().map { it.toModel(null) } // TODO: Track end date?
+    override fun getBeers(): List<Beer> = transaction {
+        BeerDao.all().map { it.toModel(null) } // TODO: Track end date?
+    }
 
-    override fun getBeerById(uuid: UUID): Beer? = BeerDao.findById(uuid)?.toModel(null) // TODO: Track end date?
+    override fun getBeerById(uuid: UUID): Beer? = transaction {
+        BeerDao.findById(uuid)?.toModel(null) // TODO: Track end date?
+    }
 
     override fun storeBeer(beer: Beer): Beer =
         transaction {

@@ -30,7 +30,7 @@ class BeerDao(
         Beer(
             uuid = id.value,
             name = name ?: "untitled beer",
-            tiltDeviceId = tiltDevice.uuid,
+            tiltDeviceId = tiltDevice.id.value,
             startDate = startedAt,
             endDate = endedAt,
         )

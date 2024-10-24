@@ -9,7 +9,6 @@ import java.util.UUID
 
 object TiltDeviceTable : UUIDTable("tilt_device") {
     val name = text("tilt_name").nullable()
-    val uuid = uuid("tilt_uuid")
     val debug = bool("debug").default(false)
     val enabled = bool("enabled").default(false)
 }
@@ -20,7 +19,6 @@ class TiltDeviceDao(
     companion object : UUIDEntityClass<TiltDeviceDao>(TiltDeviceTable)
 
     var name by TiltDeviceTable.name
-    var uuid by TiltDeviceTable.uuid
     var debug by TiltDeviceTable.debug
     var enabled by TiltDeviceTable.enabled
 

@@ -19,7 +19,7 @@ class V002DevicesEnabled : DatabaseMigration {
                     "a495bb30c5b14b44b5121370f02d74de".toUuid(), // Tilt Black
                     "a495bb00c5b14b44b5121370f02d74de".toUuid(), // Debug
                 )
-            TiltDeviceDao.find { TiltDeviceTable.uuid inList deviceList }.forEach {
+            TiltDeviceDao.find { TiltDeviceTable.id inList deviceList }.forEach {
                 it.enabled = true
             }
         }

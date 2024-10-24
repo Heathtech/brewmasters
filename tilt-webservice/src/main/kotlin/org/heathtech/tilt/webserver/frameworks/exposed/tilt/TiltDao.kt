@@ -30,7 +30,7 @@ class TiltDao(
 
     fun toModel() =
         TiltDataPoint(
-            deviceUuid = device.uuid.toString(),
+            deviceUuid = device.id.value.toString(),
             tiltTemp = tiltTemp,
             gravity = gravity,
             battery = battery,
