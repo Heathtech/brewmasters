@@ -147,6 +147,13 @@
                 }
             }
 
+            function checkKeyPress(e) {
+                var code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) {
+                    GetData();
+                }
+            }
+
         </script>
         
     </head>
@@ -202,7 +209,7 @@
             </table>
             <p class="text">
                 Rows: 
-                <input class="textInput" id="rowsCount" type="text" value="10" />
+                <input class="textInput" id="rowsCount" type="text" value="10" onkeypress="checkKeyPress(event)"/>
                 <input type="button" value="Get Beer Data Go Go Go!!" onClick="GetData()"/>
                 
             </p>
