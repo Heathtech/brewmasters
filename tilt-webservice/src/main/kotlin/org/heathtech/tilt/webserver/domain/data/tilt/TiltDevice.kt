@@ -6,4 +6,5 @@ data class TiltDevice(
     val uuid: UUID,
     val name: String,
     val debug: Boolean,
+    val enabled: Boolean,
 )
