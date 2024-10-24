@@ -8,9 +8,9 @@ data class TiltDataPoint(
     @JsonAlias("uuid")
     val deviceUuid: String,
     @JsonAlias("temp", "major")
-    val tiltTemp: Int,
+    val tiltTemp: Float,
     @JsonAlias("minor")
-    val gravity: Int,
+    val gravity: Float,
     @JsonAlias("tx_power")
     val battery: Int? = null,
     val rssi: Int? = null,

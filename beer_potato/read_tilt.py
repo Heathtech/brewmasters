@@ -6,20 +6,15 @@ import json
 import aioblescan as aiobs
 from aioblescan.plugins import Tilt
 import datetime
+import requests
+import os
+import tomllib
 
 # global
 opts = None
 decoders = []
 tick = datetime.datetime.now()
-
-
-def check_mac(val):
-    try:
-        if re.match("[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", val.lower()):
-            return val.lower()
-    except:
-        pass
-    raise argparse.ArgumentTypeError("%s is not a MAC address" % val)
+secrets = None
 
 
 def my_process(data):
@@ -32,13 +27,17 @@ def my_process(data):
     if decoders:
         for leader, decoder in decoders:
             xx = decoder.decode(ev)
-            if xx and (datetime.datetime.now() - tick).seconds > 15:
-                tick = datetime.datetime.now()
-                print(json.dumps(xx))
-                print("saving to file")
-                with open("massive_debt.json", "+a") as f:
-                    now = datetime.datetime.now()
-                    f.write(f"{now},")
+            scan_time = datetime.datetime.now()
+            if xx and scan_time >= tick:
+                tick = scan_time + datetime.timedelta(minutes=5)
+                heaths_super_secert_url = secrets["server"]["url"]
+                heaths_super_secert_url = f"{heaths_super_secert_url}?time={scan_time}"
+                # Sending data to the database
+                r = requests.post(heaths_super_secert_url, json=json.loads(xx))
+                print(r, json.dumps(xx))
+                # Local logging for safety
+                with open("/home/beer-potato/Documents/beer-potato/brewmasters/massive_debt.json", "+a") as f:
+                    f.write(f"{scan_time},")
                     f.write(json.dumps(xx))
                     f.write("\n")
 
@@ -53,13 +52,9 @@ async def amain(args=None):
     event_loop = asyncio.get_running_loop()
 
     # First create and configure a raw socket
-    # mysocket = aiobs.create_bt_socket(opts.device)
     mysocket = aiobs.create_bt_socket(0)
 
     # create a connection with the raw socket
-    # This used to work but now requires a STREAM socket.
-    # fac=event_loop.create_connection(aiobs.BLEScanRequester,sock=mysocket)
-    # Thanks to martensjacobs for this fix
     conn, btctrl = await event_loop._create_connection_transport(
         mysocket, aiobs.BLEScanRequester, None, None
     )
@@ -79,6 +74,11 @@ async def amain(args=None):
 
 
 def main():
+    # read the secrets file to get access to the top secret server that stores our top secret data
+    global secrets
+    with open("/home/beer-potato/Documents/beer-potato/brewmasters/secrets.toml", "rb") as f:
+        secrets = tomllib.load(f)
+
     # Configured to only use the tilt
     decoders.append(("Tilt", Tilt()))
 

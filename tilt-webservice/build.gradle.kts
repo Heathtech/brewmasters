@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     war
-    id("org.springframework.boot") version "3.3.4"
+    id("org.springframework.boot") version "2.7.8"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
@@ -40,11 +40,11 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.55.+")
     implementation("org.jetbrains.exposed:exposed-java-time:0.55.+")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.55.+")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
+    implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-    runtimeOnly("org.xerial:sqlite-jdbc")
+    developmentOnly("org.xerial:sqlite-jdbc")
+    developmentOnly("org.springframework.boot:spring-boot-starter-tomcat")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
