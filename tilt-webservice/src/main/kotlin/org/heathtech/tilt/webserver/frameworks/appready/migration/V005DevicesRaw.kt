@@ -9,9 +9,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Component
 
 @Component
-class V004DevicesRaw : DatabaseMigration {
+class V005DevicesRaw : DatabaseMigration {
     override val version: Int
-        get() = 4
+        get() = 5
 
     override fun applyMigration(): Unit =
         transaction {
