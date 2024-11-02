@@ -9,17 +9,20 @@ import datetime
 import requests
 import os
 import tomllib
+import statistics
 
 # global
 opts = None
 decoders = []
 tick = datetime.datetime.now()
 secrets = None
+buffer = []
 
 
 def my_process(data):
     global opts
     global tick
+    global buffer
 
     ev = aiobs.HCI_Event()
     xx = ev.decode(data)
@@ -28,18 +31,51 @@ def my_process(data):
         for leader, decoder in decoders:
             xx = decoder.decode(ev)
             scan_time = datetime.datetime.now()
+
+            if xx:
+                payload = json.loads(xx)
+                sg = int(payload["minor"])
+                buffer.append(sg)
+
             if xx and scan_time >= tick:
                 tick = scan_time + datetime.timedelta(minutes=5)
+
+                # We want to present the average sg over the last (tick - tock) span
+                # Assuming the other payload values do not change in a meaningfull way
+                # NumPy might be "overkill" (slower) in this instance? It might be better to keep a running average?
+                avg_sg = statistics.mean(buffer)
+                payload = json.loads(xx)
+                payload["minor"] = avg_sg
+                buffer.clear()
+
+                # Local logging for safety
+                with open(
+                    "/home/beer-potato/Documents/beer-potato/brewmasters/massive_debt.json",
+                    "+a",
+                ) as f:
+                    f.write(f"{scan_time},")
+                    f.write(json.dumps(payload))
+                    f.write("\n")
+
                 heaths_super_secert_url = secrets["server"]["url"]
                 heaths_super_secert_url = f"{heaths_super_secert_url}?time={scan_time}"
                 # Sending data to the database
-                r = requests.post(heaths_super_secert_url, json=json.loads(xx))
-                print(r, json.dumps(xx))
-                # Local logging for safety
-                with open("/home/beer-potato/Documents/beer-potato/brewmasters/massive_debt.json", "+a") as f:
-                    f.write(f"{scan_time},")
-                    f.write(json.dumps(xx))
-                    f.write("\n")
+                try:
+                    # I don't think this is *really* to blame, but... maybe?
+                    r = requests.post(heaths_super_secert_url, json=payload)
+                    print(scan_time, r, json.dumps(payload))
+
+                    pass
+                except (
+                    Exception
+                ) as wtf_is_going_on_this_is_a_simple_program_dont_fail_me_python_i_love_you_but_youre_making_me_sad:
+                    with open(
+                        "/home/beer-potato/Documents/beer-potato/brewmasters/log.txt"
+                    ) as error_log:
+                        error_log.write(
+                            wtf_is_going_on_this_is_a_simple_program_dont_fail_me_python_i_love_you_but_youre_making_me_sad
+                        )
+                        error_log.write("\n")
 
                 break
     else:
@@ -76,7 +112,9 @@ async def amain(args=None):
 def main():
     # read the secrets file to get access to the top secret server that stores our top secret data
     global secrets
-    with open("/home/beer-potato/Documents/beer-potato/brewmasters/secrets.toml", "rb") as f:
+    with open(
+        "/home/beer-potato/Documents/beer-potato/brewmasters/secrets.toml", "rb"
+    ) as f:
         secrets = tomllib.load(f)
 
     # Configured to only use the tilt
